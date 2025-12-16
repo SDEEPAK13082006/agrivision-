@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<h4 class="section-title">Pest & Disease Assistant / കീട-രോഗ നിർദ്ദേശം</h4>
+<form method="post" enctype="multipart/form-data" class="row g-3 mb-3">
+  <div class="col-md-6">
+    <label class="form-label">Crop / വിള</label>
+    <input type="text" name="crop" class="form-control" required>
+  </div>
+  <div class="col-md-6">
+    <label class="form-label">Upload crop photo</label>
+    <input type="file" name="photo" accept="image/*" class="form-control" required>
+    <div class="form-text">Upload a clear photo of the affected plant part.</div>
+  </div>
+  <div class="col-12">
+    <button class="btn btn-success" type="submit">Get Diagnosis / നിർദേശം</button>
+  </div>
+</form>
+
+{% if diagnosis %}
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Result for {{ diagnosis.crop }}</h5>
+      <p><strong>Likely disease:</strong> {{ diagnosis.likely_disease }} ({{ diagnosis.confidence }}% confidence)</p>
+      <p><strong>Treatment:</strong> {{ diagnosis.treatment }}</p>
+      <p><strong>Organic option:</strong> {{ diagnosis.organic_option }}</p>
+      <p><strong>Caution:</strong> {{ diagnosis.caution }}</p>
+    </div>
+  </div>
+{% endif %}
+{% endblock %}

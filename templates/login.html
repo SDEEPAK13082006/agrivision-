@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AgriVision – Farmer Login</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: linear-gradient(to bottom right, #14532d 0%, #15803d 40%, #bbf7d0 100%);
+    }
+    .login-shell {
+      max-width: 960px;
+      width: 100%;
+      margin: 1.5rem;
+    }
+    .login-card {
+      border-radius: 1.5rem;
+      overflow: hidden;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.35);
+      border: none;
+    }
+    .login-visual {
+      background-image: linear-gradient(rgba(15,23,42,0.55), rgba(15,23,42,0.65)),
+                        url('https://img.freepik.com/premium-photo/man-smiles-field-rice-with-palm-trees-background_1277069-4052.jpg');
+      background-size: cover;
+      background-position: center center;
+      color: #f9fafb;
+    }
+    .login-overlay-content {
+      padding: 2.25rem 2rem;
+    }
+    .brand-title {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #bbf7d0;
+    }
+    .brand-subtitle {
+      font-size: 0.95rem;
+      color: #e5e7eb;
+    }
+    .login-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.25rem 0.7rem;
+      border-radius: 999px;
+      background: rgba(15,23,42,0.7);
+      font-size: 0.75rem;
+      color: #d1fae5;
+    }
+    .login-badge span {
+      font-size: 0.9rem;
+    }
+    .login-form-side {
+      background: #f9fafb;
+    }
+    .form-label {
+      font-size: 0.85rem;
+    }
+    .small-muted {
+      font-size: 0.8rem;
+      color: #6b7280;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-shell">
+    <div class="card login-card">
+      <div class="row g-0">
+        <div class="col-md-6 login-visual d-flex align-items-end">
+          <div class="login-overlay-content w-100">
+            <div class="login-badge mb-3">
+              <span>🌾</span>
+              <span>For Kerala farmers</span>
+            </div>
+            <div class="brand-title mb-1">AgriVision</div>
+            <p class="brand-subtitle mb-3">AI‑powered crop advisor, weather alerts, soil care and schemes in one place.</p>
+            <p class="small-muted mb-0">
+              "From paddy fields to plantations – plan better, protect your crop and
+              get awareness about government support, all in a simple dashboard."
+            </p>
+          </div>
+        </div>
+        <div class="col-md-6 login-form-side d-flex align-items-center">
+          <div class="card-body p-4 p-md-5 w-100">
+            <h5 class="mb-2">Farmer Login / കർഷക ലോഗിൻ</h5>
+            <p class="small-muted mb-3">
+              Enter your 10-digit phone number and a strong password to open your farming assistant.
+            </p>
+
+            <form method="post">
+              <div class="mb-3">
+                <label for="phone" class="form-label">Farmer phone number / ഫോൺ നമ്പർ</label>
+                <input type="tel" class="form-control" id="phone" name="phone" inputmode="numeric" pattern="\d{10}" maxlength="10" placeholder="10-digit mobile number" required>
+                <div class="form-text">Enter 10 digits only (without country code).</div>
+              </div>
+              <div class="mb-3">
+                <label for="password" class="form-label">Password / പാസ്‌വേഡ്</label>
+                <input type="password" class="form-control" id="password" name="password" placeholder="e.g. Farmer@123" required>
+                <div class="form-text">Password must include letters, numbers and special characters.</div>
+              </div>
+
+              {% if error %}
+              <div class="alert alert-danger py-2" role="alert">{{ error }}</div>
+              {% endif %}
+
+              <button type="submit" class="btn btn-success w-100">Enter AgriVision</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

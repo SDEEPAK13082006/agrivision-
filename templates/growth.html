@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<h4 class="section-title">Plant Growth Prediction / വളർച്ച പ്രവചനം</h4>
+<p class="text-muted mb-3">
+  Enter your crop and land size to get a rough idea of expected yield,
+  days to harvest and possible profit. This is an approximate AI-style
+  rule-based estimate for learning and planning only.
+</p>
+
+<form method="post" class="row g-3 mb-3">
+  <div class="col-md-4">
+    <label class="form-label">Crop / വിള</label>
+    <input type="text" name="crop" class="form-control" placeholder="Paddy, Banana, Coconut..." required>
+  </div>
+  <div class="col-md-4">
+    <label class="form-label">Land Size (acres) / വിസ്തീർണം</label>
+    <input type="number" step="0.1" min="0.1" name="land_size" class="form-control" required>
+  </div>
+  <div class="col-12">
+    <button class="btn btn-success" type="submit">Predict Growth / പ്രവചിക്കുക</button>
+  </div>
+</form>
+
+{% if prediction %}
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Prediction for {{ prediction.crop }} ({{ prediction.land_size_acres }} acres)</h5>
+      <p>
+        <strong>Expected yield:</strong> {{ prediction.expected_yield_tons }} tonnes (approx.)<br>
+        <strong>Time to harvest:</strong> {{ prediction.days_to_harvest }} days (from planting)<br>
+        <strong>Estimated profit:</strong> ₹{{ prediction.expected_profit_rs }} (rough estimate)
+      </p>
+      <p class="mb-0"><strong>Note:</strong> {{ prediction.notes }}</p>
+    </div>
+  </div>
+{% endif %}
+{% endblock %}

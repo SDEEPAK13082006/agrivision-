@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-8">
+    <h4 class="section-title mb-2">{{ scheme.title }}</h4>
+    <p class="text-muted small mb-2">{{ scheme.tagline }}</p>
+    <p class="small">{{ scheme.summary }}</p>
+
+    <h6 class="mt-3 mb-1">Key benefits</h6>
+    <ul class="small mb-2">
+      {% for line in scheme.benefits %}
+      <li>{{ line }}</li>
+      {% endfor %}
+    </ul>
+
+    <h6 class="mt-3 mb-1">Eligibility (who can apply)</h6>
+    <ul class="small mb-2">
+      {% for line in scheme.eligibility %}
+      <li>{{ line }}</li>
+      {% endfor %}
+    </ul>
+
+    <h6 class="mt-3 mb-1">How to apply</h6>
+    <ul class="small mb-2">
+      {% for line in scheme.how_to_apply %}
+      <li>{{ line }}</li>
+      {% endfor %}
+    </ul>
+
+    <p class="small text-muted mb-0"><strong>Note:</strong> {{ scheme.note }}</p>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="border rounded-3 p-3 bg-white small mb-3">
+      <h6 class="fw-semibold mb-2">Back to schemes</h6>
+      <p class="mb-2">You can also explore schemes based on your land size in the dedicated Govt Schemes assistant.</p>
+      <a href="{{ url_for('schemes_view') }}" class="btn btn-sm btn-outline-success">Open Govt Schemes Assistant</a>
+    </div>
+
+    <a href="{{ url_for('index') }}" class="btn btn-sm btn-link px-0">&larr; Back to Home</a>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+<h4 class="section-title">Water & Irrigation Scheduler / ജലസേചന പദ്ധതി</h4>
+<form method="post" class="row g-3 mb-3">
+  <div class="col-md-3">
+    <label class="form-label">Crop / വിള</label>
+    <input type="text" name="crop" class="form-control" required>
+  </div>
+  <div class="col-md-3">
+    <label class="form-label">Growth Stage</label>
+    <select name="stage" class="form-select">
+      <option value="vegetative">Vegetative</option>
+      <option value="seedling">Seedling</option>
+      <option value="flowering">Flowering</option>
+    </select>
+  </div>
+  <div class="col-md-3">
+    <label class="form-label">Soil Type</label>
+    <select name="soil_type" class="form-select">
+      <option value="clay">Clay</option>
+      <option value="loam">Loam</option>
+      <option value="laterite">Laterite</option>
+      <option value="sandy">Sandy</option>
+    </select>
+  </div>
+  <div class="col-md-3">
+    <label class="form-label">Rain Chance</label>
+    <select name="rain_chance" class="form-select">
+      <option value="low">Low</option>
+      <option value="medium">Medium</option>
+      <option value="high">High</option>
+    </select>
+  </div>
+  <div class="col-12">
+    <button class="btn btn-success" type="submit">Get Irrigation Plan</button>
+  </div>
+</form>
+
+{% if plan %}
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Irrigation Plan for {{ plan.crop }}</h5>
+      <p>Water requirement: {{ plan.water_liters_per_day }} litres/day (approx. area)<br>
+         Frequency: {{ plan.frequency }}
+      </p>
+      <p><strong>Notes:</strong> {{ plan.notes }}</p>
+    </div>
+  </div>
+{% endif %}
+{% endblock %}

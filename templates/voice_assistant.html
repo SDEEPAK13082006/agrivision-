@@ -1,0 +1,296 @@
+{% extends "base.html" %}
+{% block content %}
+<h4 class="section-title">Chat-style Voice Assistant / ശബ്ദ ചാറ്റ് സഹായി</h4>
+
+<style>
+  .chat-container {
+    background: #0f172a;
+    border-radius: 1rem;
+    padding: 1rem;
+    color: #e5e7eb;
+  }
+  .chat-window {
+    max-height: 420px;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+  }
+  .message-row {
+    margin-bottom: 0.75rem;
+    display: flex;
+  }
+  .message-user {
+    justify-content: flex-end;
+  }
+  .message-assistant {
+    justify-content: flex-start;
+  }
+  .bubble {
+    max-width: 80%;
+    padding: 0.55rem 0.8rem;
+    border-radius: 0.75rem;
+    font-size: 0.9rem;
+    white-space: pre-wrap;
+  }
+  .bubble-user {
+    background: #22c55e;
+    color: #022c22;
+    border-bottom-right-radius: 0.2rem;
+  }
+  .bubble-assistant {
+    background: #111827;
+    border: 1px solid #1f2937;
+    border-bottom-left-radius: 0.2rem;
+  }
+  .chat-input-bar {
+    background: #020617;
+    border-radius: 999px;
+    padding: 0.35rem 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+  }
+  .chat-input-bar input {
+    border: none;
+    background: transparent;
+    color: #e5e7eb;
+    width: 100%;
+    outline: none;
+    font-size: 0.9rem;
+  }
+  .icon-button {
+    border-radius: 999px;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.3rem;
+    height: 2.3rem;
+    padding: 0;
+    font-size: 1rem;
+  }
+  .icon-button-send {
+    background: #22c55e;
+    color: #022c22;
+  }
+  .icon-button-mic {
+    background: #0f172a;
+    color: #e5e7eb;
+    border: 1px solid #1e293b;
+  }
+</style>
+
+<div class="chat-container">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <div class="small text-muted">Language for voice (Malayalam / English):</div>
+    <select id="languageSelect" class="form-select form-select-sm" style="width:auto;">
+      <option value="ml-IN">Malayalam (ml-IN)</option>
+      <option value="en-IN">English (en-IN)</option>
+    </select>
+  </div>
+
+  <div id="chatWindow" class="chat-window mb-2">
+    <!-- Messages will be appended here dynamically -->
+  </div>
+
+  <div class="chat-input-bar">
+    <input id="userInput" type="text" placeholder="Ask about crops, weather, soil, schemes..." autocomplete="off" />
+    <button id="micBtn" class="icon-button icon-button-mic" title="Voice input">
+      🎙
+    </button>
+    <button id="sendBtn" class="icon-button icon-button-send" title="Send">
+      ➤
+    </button>
+  </div>
+</div>
+
+<script>
+  // Rule-based bilingual (Malayalam + English) reply generator.
+  function generateReply(text) {
+    const lower = text.toLowerCase();
+
+    // Weather / rain related
+    if (lower.includes('weather') || lower.includes('കാലാവസ്ഥ')) {
+      return 'ഇന്ന് ചില ഇടങ്ങളിലായി മഴയ്ക്കുള്ള സാധ്യതയുണ്ട്. വയലിൽ വെള്ളം കെട്ടിക്കിടക്കുന്ന അവസ്ഥ ഒഴിവാക്കുക, ഇലകളിൽ പാടുകൾ ഉണ്ടോന്ന് നോക്കി രോഗലക്ഷണം പരിശോധിക്കുക.\nToday there is a chance of scattered showers. Avoid waterlogging and watch for fungal diseases.';
+    }
+
+    // Crop choice / which crop to grow
+    if (
+      lower.includes('which crop') ||
+      lower.includes('best crop') ||
+      lower.includes('what to plant') ||
+      lower.includes('crop for my land') ||
+      lower.includes('ഏത് വിള') || lower.includes('ഏതു വിള') ||
+      lower.includes('വിള നിർദ്ദേശം')
+    ) {
+      return 'വിള തെരഞ്ഞെടുപ്പിന് ഇടത് വശത്തുള്ള "Crop Advisor" മോഡ്യൂൾ ഉപയോഗിക്കുക. അത് മണ്ണിന്റെ തരം, ജില്ല, വിസ്തീർണം, കാലം എന്നിവ ചോദിച്ച് അനുയോജ്യമായ വിള നിർദ്ദേശിക്കും.\nFor crop selection, please open the "Crop Advisor" module on the left. It will ask soil type, district, land size and season and suggest suitable crops.';
+    }
+
+    // Banana specific
+    if (lower.includes('banana') || lower.includes('വാഴ')) {
+      return 'വാഴയ്ക്ക് വെള്ളം കെട്ടിക്കിടക്കുന്നത് ഒഴിവാക്കണം. നല്ല ജൈവവളം കൂടെ ശുപാർശ ചെയ്യുന്ന എൻപികെ (NPK) അളവിൽ മാത്രം നൽകുക.\nFor banana, avoid waterlogging and apply organic manure along with recommended NPK dose.';
+    }
+
+    // Paddy / rice specific
+    if (lower.includes('paddy') || lower.includes('നേൽ')) {
+      return 'നേൽ കൃഷിക്ക് വയൽ ശരിയായി ലെവൽ ചെയ്തു 2-3 സെ.മീ. ഉയരത്തിൽ മാത്രം വെള്ളം നിലനിർത്തണം.\nFor paddy, ensure proper field leveling and maintain 2-3 cm water depth during vegetative stage.';
+    }
+
+    // Soil / fertilizer / manure questions
+    if (
+      lower.includes('fertilizer') || lower.includes('fertiliser') ||
+      lower.includes('manure') || lower.includes('npk') ||
+      lower.includes('soil') || lower.includes('pH') ||
+      lower.includes('വളം') || lower.includes('മണ്ണ്')
+    ) {
+      return 'വളം നിർദ്ദേശത്തിന് "Soil & Fertilizer" മോഡ്യൂൾ ഉപയോഗിക്കുക. വിള, ജൈവ വസ്തു നില, വിസ്തീർണം എന്നിവ നൽകി ശരിയായ NPK അളവ് കിട്ടും.\nFor fertilizer and soil health, use the "Soil & Fertilizer" module. Enter crop, organic matter level and land size to get an approximate NPK dose and organic options.';
+    }
+
+    // Irrigation / water questions
+    if (
+      lower.includes('irrigation') || lower.includes('water') ||
+      lower.includes('watering') ||
+      lower.includes('ജലസേചനം') || lower.includes('വെള്ളം')
+    ) {
+      return 'ജലസേചനക്രമത്തിന് "Irrigation" മോഡ്യൂൾ തുറക്കുക. വിള, വളർച്ചാ ഘട്ടം, മണ്ണിന്റെ തരം, മഴ സാധ്യത എന്നിവ നൽകി എത്ര ദിവസത്തിന് എത്ര വെള്ളം മതിയെന്ന് കാണാം.\nFor irrigation planning, open the "Irrigation" module. Give crop, growth stage, soil type and rain chance to see a simple water requirement and frequency.';
+    }
+
+    // Pest / disease questions
+    if (
+      lower.includes('pest') || lower.includes('disease') ||
+      lower.includes('insect') || lower.includes('worm') ||
+      lower.includes('leaf spot') || lower.includes('yellow leaf') ||
+      lower.includes('കീടം') || lower.includes('രോഗം')
+    ) {
+      return 'കീട-രോഗ നിർദ്ദേശത്തിന് "Pest & Disease" മോഡ്യൂൾ ഉപയോഗിക്കുക. അവിടെ വിളയും ലക്ഷണങ്ങളും ടൈപ്പ് ചെയ്‌താൽ ഒരു അടിസ്ഥാന നിർദേശം ലഭിക്കും. ഗുരുതര പ്രശ്നം ആണെങ്കിൽ അടുത്ത Krishi Bhavan ബന്ധപ്പെടുക.\nFor pest or disease doubts, use the "Pest & Disease" module. Type crop name and main symptoms to get a basic suggestion. For serious damage, contact your nearest Krishi Bhavan.';
+    }
+
+    // Market prices / selling
+    if (
+      lower.includes('price') || lower.includes('market') ||
+      lower.includes('sell') || lower.includes('rate') ||
+      lower.includes('വില') || lower.includes('ചന്ത')
+    ) {
+      return 'നിലവിലെ വിപണി വില അറിഞ്ഞ് നല്ല നിരക്കിൽ വിൽക്കാൻ "Market Prices" മോഡ്യൂൾ ഉപയോഗിക്കുക. വിളയും ജില്ലയും നൽകിയാൽ സമീപ വിപണികളിലെ ഏകദേശ വിലകൾ കാണിക്കും.\nTo check market prices and sell at better rates, open the "Market Prices" module. Enter crop and district to view approximate nearby market prices.';
+    }
+
+    // Schemes / subsidy / insurance
+    if (lower.includes('scheme') || lower.includes('പദ്ധതി')) {
+      return 'താങ്കൾക്ക് പി.എം കിസാൻ പോലുള്ള കേന്ദ്ര/സംസ്ഥാന കർഷക പദ്ധതികൾക്കും ഇൻഷുറൻസിനും അർഹത ഉണ്ടാകാം. അടുത്തുള്ള കൃഷിഭവനിൽ ബന്ധപ്പെടുക.\nYou may be eligible for PM-KISAN and state crop insurance schemes. Please contact your nearest Krishi Bhavan.';
+    }
+
+    // Fallback: general guidance
+    return 'താങ്കളുടെ ചോദ്യം കിട്ടി. കൂടുതൽ കൃത്യമായ നിർദ്ദേശത്തിനായി ഇടത് വശത്തുള്ള മോഡ്യൂളുകൾ (Crop Advisor, Soil & Fertilizer, Irrigation, Market Prices, Schemes) പിന്തുടരുക.\nI received your question. For more accurate help, please open the modules on the left like Crop Advisor, Soil & Fertilizer, Irrigation, Market Prices or Schemes based on your need.';
+  }
+
+  (function() {
+    const chatWindow = document.getElementById('chatWindow');
+    const userInput = document.getElementById('userInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const micBtn = document.getElementById('micBtn');
+    const langSelect = document.getElementById('languageSelect');
+
+    let recognition = null;
+    let recognizing = false;
+
+    function appendMessage(sender, text) {
+      const row = document.createElement('div');
+      row.className = 'message-row ' + (sender === 'user' ? 'message-user' : 'message-assistant');
+
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble ' + (sender === 'user' ? 'bubble-user' : 'bubble-assistant');
+      bubble.textContent = text;
+
+      row.appendChild(bubble);
+      chatWindow.appendChild(row);
+      chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+
+    function speakText(text) {
+      const synth = window.speechSynthesis;
+      if (!synth) return;
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = langSelect.value;
+      synth.cancel();
+      synth.speak(utterance);
+    }
+
+    function handleUserMessage(text, fromVoice = false) {
+      const trimmed = text.trim();
+      if (!trimmed) return;
+      appendMessage('user', trimmed);
+      userInput.value = '';
+
+      // Simulate a slight delay like chat models
+      setTimeout(() => {
+        const reply = generateReply(trimmed);
+        appendMessage('assistant', reply);
+      }, fromVoice ? 800 : 400);
+    }
+
+    function initRecognition() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        alert('Voice input is not supported in this browser. You can still type your questions below.');
+        micBtn.disabled = true;
+        return;
+      }
+      recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = langSelect.value;
+
+      recognition.onstart = () => {
+        recognizing = true;
+        micBtn.disabled = true;
+      };
+
+      recognition.onend = () => {
+        recognizing = false;
+        micBtn.disabled = false;
+      };
+
+      recognition.onerror = (event) => {
+        console.error('Speech recognition error:', event);
+        recognizing = false;
+        micBtn.disabled = false;
+      };
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        // Put recognized text into the input so the farmer can check/correct
+        // before sending. This avoids wrong messages due to mis-recognition.
+        userInput.value = transcript;
+        userInput.focus();
+      };
+    }
+
+    // Initial assistant greeting
+    appendMessage('assistant', 'നമസ്കാരം! ഞാൻ നിങ്ങളുടെ കർഷക സഹായി ചാറ്റ്‌ബോട്ട് ആണ്.\nHello! I am your farming assistant chatbot. Ask about crops, weather, soil, irrigation or schemes.');
+
+    sendBtn.addEventListener('click', () => {
+      handleUserMessage(userInput.value);
+    });
+
+    userInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        handleUserMessage(userInput.value);
+      }
+    });
+
+    micBtn.addEventListener('click', () => {
+      if (!recognition) {
+        initRecognition();
+        if (!recognition) return;
+      }
+      if (recognizing) {
+        recognition.stop();
+      } else {
+        recognition.lang = langSelect.value;
+        recognition.start();
+      }
+    });
+  })();
+</script>
+{% endblock %}

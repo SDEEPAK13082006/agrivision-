@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<h4 class="section-title">Weather & Risk Alerts / കാലാവസ്ഥയും അപകടസൂചനയും</h4>
+<form method="post" class="row g-3 mb-3">
+  <div class="col-md-4">
+    <label class="form-label">District / ജില്ല</label>
+    <input type="text" name="district" class="form-control" required>
+  </div>
+  <div class="col-md-4">
+    <label class="form-label">Main Crop / പ്രധാന വിള</label>
+    <input type="text" name="crop" class="form-control" required>
+  </div>
+  <div class="col-12">
+    <button class="btn btn-success" type="submit">Get Alerts / സൂചന</button>
+  </div>
+</form>
+
+{% if alerts %}
+  <h5>Alerts:</h5>
+  <ul class="list-group">
+    {% for a in alerts %}
+      <li class="list-group-item">
+        <strong>{{ a.type }} ({{ a.level }})</strong><br>
+        {{ a.message }}
+      </li>
+    {% endfor %}
+  </ul>
+{% endif %}
+{% endblock %}

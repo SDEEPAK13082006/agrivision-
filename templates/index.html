@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row g-4 mb-4">
+  <div class="col-lg-7">
+    <h3 class="mb-2">Why Smart Farming Matters for Kerala Farmers</h3>
+    <p class="text-muted">
+      Kerala agriculture faces unpredictable rains, new pests, rising input costs and fragmented
+      land holdings. By combining traditional wisdom with simple AI tools we can help small
+      farmers plan crops better, protect soil health and earn more from every acre.
+    </p>
+
+    <div class="row g-3 mt-2">
+      <div class="col-md-6">
+        <div class="border rounded-3 p-3 h-100 bg-white">
+          <h6 class="fw-semibold">🌾 Better Crop Planning</h6>
+          <p class="small mb-0">
+            Choose crops that match local climate, soil type and season so that every
+            cent of investment gives better yield and income.
+          </p>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="border rounded-3 p-3 h-100 bg-white">
+          <h6 class="fw-semibold">💧 Smart Water & Soil Use</h6>
+          <p class="small mb-0">
+            Plan irrigation as per weather, avoid wastage and protect soil fertility
+            with balanced fertilizers and organic manures.
+          </p>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="border rounded-3 p-3 h-100 bg-white">
+          <h6 class="fw-semibold">🐛 Early Pest & Disease Care</h6>
+          <p class="small mb-0">
+            Identify common problems early and follow safe, recommended control measures
+            to reduce crop loss and pesticide misuse.
+          </p>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="border rounded-3 p-3 h-100 bg-white">
+          <h6 class="fw-semibold">📈 Better Prices & Schemes</h6>
+          <p class="small mb-0">
+            Stay aware of market trends and government schemes so that the farmer
+            gets a fair price and maximum support.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="row g-3">
+      <div class="col-12">
+      <div class="ratio ratio-16x9 rounded-4 overflow-hidden border" style="background:#022c22;">
+        <img src="https://i.pinimg.com/originals/2b/90/b7/2b90b75c737128ef4748d41d627c402f.jpg" class="w-100 h-100 object-fit-cover" alt="A Kerala farmer stands in a lush green paddy field during harvest season, demonstrating traditional agricultural practices in a serene rural landscape">
+      </div>
+      </div>
+      <div class="col-6">
+      <div class="ratio ratio-4x3 rounded-3 overflow-hidden border" style="background:#0f766e;">
+        <img src="https://thumbs.dreamstime.com/b/paddy-field-11870763.jpg" class="w-100 h-100 object-fit-cover" alt="Expansive paddy field with rows of mature rice plants under blue sky, showcasing the scale of traditional rice cultivation">
+      </div>
+      </div>
+      <div class="col-6">
+      <div class="ratio ratio-4x3 rounded-3 overflow-hidden border" style="background:#16a34a;">
+        <img src="https://static.vecteezy.com/system/resources/previews/029/543/072/non_2x/farmer-working-in-a-banana-plantation-harvesting-of-ripe-bananas-ai-generated-pro-photo.jpg" class="w-100 h-100 object-fit-cover" alt="Banana plantation with large leafy plants growing in organized rows, representing sustainable crop diversity in Kerala farming">
+      </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="my-4">
+
+<div class="row g-4">
+  <div class="col-lg-6">
+    <h4 class="mb-2">Advantages of Farming</h4>
+    <ul class="small mb-0">
+      <li><strong>Food security:</strong> Farming is the backbone that feeds our families, towns and cities every single day.</li>
+      <li><strong>Employment:</strong> Agriculture gives direct and indirect jobs to millions of people in villages and small towns.</li>
+      <li><strong>Local economy:</strong> When farmers earn more, shops, transport and local businesses also grow.</li>
+      <li><strong>Environmental balance:</strong> Healthy soils, trees and water bodies maintained by good farming practices support biodiversity.</li>
+      <li><strong>Cultural strength:</strong> Festivals, food and traditions in Kerala and across India are deeply linked to farming.</li>
+    </ul>
+  </div>
+
+  <div class="col-lg-6">
+    <h4 class="mb-2">Why Farming is India's Future</h4>
+    <ul class="small mb-0">
+      <li><strong>Rising demand for safe food:</strong> Cities are asking for more chemical-safe, traceable and local produce.</li>
+      <li><strong>Agri-tech opportunities:</strong> Drones, sensors, AI and mobile apps create new jobs for youth in agriculture.</li>
+      <li><strong>Climate-smart practices:</strong> Water-saving irrigation, resilient crops and organic methods make farming more sustainable.</li>
+      <li><strong>Export potential:</strong> Indian spices, fruits, rice and coconut products have strong markets across the world.</li>
+      <li><strong>Inclusive growth:</strong> Supporting small and marginal farmers directly improves rural livelihoods and reduces poverty.</li>
+    </ul>
+  </div>
+</div>
+
+<hr class="my-4">
+
+<div class="row g-4 mb-4">
+  <div class="col-12">
+    <h4 class="mb-2">Important Government Schemes for Farmers</h4>
+  </div>
+  <div class="col-md-4">
+    <div class="card h-100 border-0 shadow-sm">
+      <div class="ratio ratio-4x3">
+        <img src="https://img.etimg.com/thumb/msid-90201895,width-1070,height-580,imgsize-793688,overlay-etwealth/photo.jpg" class="card-img-top object-fit-cover" alt="PM-KISAN scheme illustration">
+      </div>
+      <div class="card-body small">
+        <h6 class="fw-semibold mb-1">PM-KISAN (Central)</h6>
+        <p class="mb-1">Income support of ₹ 6,000 per year to small and marginal farmer families, given in three instalments directly to the bank account.</p>
+        <p class="mb-1 text-muted">Apply through Krishi Bhavan or the official PM-KISAN portal.</p>
+        <a href="https://pmkisan.gov.in/" target="_blank" rel="noopener" class="btn btn-sm btn-success mt-1">Apply online</a>
+        <a href="{{ url_for('scheme_detail_view', code='pm-kisan') }}" class="btn btn-sm btn-outline-light border-success text-success mt-1">View complete details</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card h-100 border-0 shadow-sm">
+      <div class="ratio ratio-4x3">
+        <img src="https://thumbs.dreamstime.com/b/farmers-unidentified-farm-workers-plant-organically-cultivated-paddy-seedlings-paddy-fields-managed-kerala-jaiva-53566411.jpg" class="card-img-top object-fit-cover" alt="Karshaka Insurance Scheme illustration">
+      </div>
+      <div class="card-body small">
+        <h6 class="fw-semibold mb-1">Karshaka Insurance Scheme (Kerala)</h6>
+        <p class="mb-1">State-level crop insurance to support farmers when yield is lost due to flood, drought or other natural calamities.</p>
+        <p class="mb-1 text-muted">Contact your local Krishi Bhavan or agriculture officer for enrolment details.</p>
+        <a href="https://www.keralaagriculture.gov.in/" target="_blank" rel="noopener" class="btn btn-sm btn-success mt-1">Apply / know more</a>
+        <a href="{{ url_for('scheme_detail_view', code='karshaka-insurance') }}" class="btn btn-sm btn-outline-light border-success text-success mt-1">View complete details</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card h-100 border-0 shadow-sm">
+      <div class="ratio ratio-4x3">
+        <img src="https://tse2.mm.bing.net/th/id/OIP.xcmE7t3PE27oCJGIRhKpygHaD4?cb=ucfimg2&ucfimg=1&rs=1&pid=ImgDetMain&o=7&rm=3" class="card-img-top object-fit-cover" alt="PM-KUSUM / Solar Pump scheme illustration">
+      </div>
+      <div class="card-body small">
+        <h6 class="fw-semibold mb-1">PM-KUSUM / Solar Pump Support</h6>
+        <p class="mb-1">Central scheme that helps farmers install solar pumps and small solar plants to reduce electricity cost for irrigation.</p>
+        <p class="mb-1 text-muted">Check with KSEB / agriculture department for current subsidy and application process.</p>
+        <a href="https://mnre.gov.in/pm-kusum" target="_blank" rel="noopener" class="btn btn-sm btn-success mt-1">Apply / scheme portal</a>
+        <a href="{{ url_for('scheme_detail_view', code='pm-kusum') }}" class="btn btn-sm btn-outline-light border-success text-success mt-1">View complete details</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-8">
+    <h4 class="mb-2"> Community &amp; Support (Future Features)</h4>
+    <ul class="small mb-0">
+      <li><strong>Farmer-to-Farmer Q&amp;A Forum:</strong> A simple discussion space where Kerala farmers can ask doubts and share field experience with each other.</li>
+      <li><strong>AI Chat Support in Local Languages:</strong> Integrated chat assistant that can understand and reply using Malayalam, English and Tamil for better comfort.</li>
+      <li><strong>Expert Consultations (free for farmers):</strong> Option to book time with agriculture officers or specialists for detailed crop and farm planning advice.</li>
+    </ul>
+  </div>
+</div>
+{% endblock %}
