@@ -96,6 +96,10 @@ SCHEME_DETAILS = {
 # Very simple in-memory farm diary store for demo
 FARM_DIARY_ENTRIES = []
 
+# In-memory community posts storage
+COMMUNITY_POSTS = []
+COMMUNITY_POST_ID = 0
+
 
 def _is_strong_password(pw: str) -> bool:
     """Check that password has letters, digits and special characters."""
@@ -299,6 +303,75 @@ def logout_view():
     session.clear()
     flash("Logged out successfully.")
     return redirect(url_for("login_view"))
+
+
+@app.route("/community", methods=["GET", "POST"])
+def community_view():
+    """Farmer Knowledge-Sharing Community - share problems, photos, and solutions."""
+    global COMMUNITY_POST_ID
+    
+    if request.method == "POST":
+        action = request.form.get("action", "")
+        
+        if action == "new_post":
+            # Create a new post
+            title = request.form.get("title", "").strip()
+            content = request.form.get("content", "").strip()
+            category = request.form.get("category", "general")
+            image_url = request.form.get("image_url", "").strip()
+            
+            if title and content:
+                COMMUNITY_POST_ID += 1
+                post = {
+                    "id": COMMUNITY_POST_ID,
+                    "author": session.get("username", "Anonymous"),
+                    "title": title,
+                    "content": content,
+                    "category": category,
+                    "image_url": image_url if image_url else None,
+                    "likes": 0,
+                    "liked_by": [],
+                    "comments": [],
+                    "timestamp": "Just now"
+                }
+                COMMUNITY_POSTS.insert(0, post)  # Add to beginning
+                flash("Your post has been shared with the community!")
+        
+        elif action == "add_comment":
+            post_id = int(request.form.get("post_id", 0))
+            comment_text = request.form.get("comment_text", "").strip()
+            
+            if comment_text:
+                for post in COMMUNITY_POSTS:
+                    if post["id"] == post_id:
+                        post["comments"].append({
+                            "author": session.get("username", "Anonymous"),
+                            "text": comment_text,
+                            "timestamp": "Just now"
+                        })
+                        break
+        
+        elif action == "like_post":
+            post_id = int(request.form.get("post_id", 0))
+            user = session.get("username", "Anonymous")
+            
+            for post in COMMUNITY_POSTS:
+                if post["id"] == post_id:
+                    if user not in post["liked_by"]:
+                        post["likes"] += 1
+                        post["liked_by"].append(user)
+                    break
+        
+        return redirect(url_for("community_view"))
+    
+    # Filter by category if provided
+    category_filter = request.args.get("category", "all")
+    if category_filter == "all":
+        filtered_posts = COMMUNITY_POSTS
+    else:
+        filtered_posts = [p for p in COMMUNITY_POSTS if p["category"] == category_filter]
+    
+    return render_template("community.html", posts=filtered_posts, current_category=category_filter)
 
 
 if __name__ == "__main__":

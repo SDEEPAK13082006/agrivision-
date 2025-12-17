@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+{% block content %}
+<h4 class="section-title">🌾 Farmer Knowledge-Sharing Community / കർഷക സമൂഹം</h4>
+<p class="text-muted small mb-3">Share your farming problems, photos, and solutions. Learn from fellow farmers and experts across Kerala.</p>
+
+<style>
+  .post-card {
+    border-radius: 1rem;
+    border: 1px solid #e2e8f0;
+    margin-bottom: 1rem;
+    overflow: hidden;
+  }
+  .post-header {
+    background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  .post-author {
+    font-weight: 600;
+    color: #166534;
+  }
+  .post-category {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 999px;
+    background: #22c55e;
+    color: white;
+  }
+  .post-body {
+    padding: 1rem;
+  }
+  .post-image {
+    max-width: 100%;
+    max-height: 300px;
+    object-fit: cover;
+    border-radius: 0.5rem;
+    margin-top: 0.75rem;
+  }
+  .post-actions {
+    padding: 0.5rem 1rem;
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+  .like-btn {
+    border: none;
+    background: none;
+    color: #64748b;
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+  .like-btn:hover {
+    color: #ef4444;
+  }
+  .like-btn.liked {
+    color: #ef4444;
+  }
+  .comment-section {
+    padding: 0.75rem 1rem;
+    background: #f1f5f9;
+    border-top: 1px solid #e2e8f0;
+  }
+  .comment-item {
+    background: white;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+  }
+  .comment-author {
+    font-weight: 600;
+    color: #0f766e;
+  }
+  .category-pills {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+  .category-pill {
+    padding: 0.3rem 0.8rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    text-decoration: none;
+    border: 1px solid #22c55e;
+    color: #166534;
+    transition: all 0.2s;
+  }
+  .category-pill:hover, .category-pill.active {
+    background: #22c55e;
+    color: white;
+  }
+  .new-post-card {
+    background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+    border-radius: 1rem;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+  }
+</style>
+
+<!-- New Post Form -->
+<div class="new-post-card">
+  <h6 class="mb-3">📝 Share Your Problem or Knowledge / നിങ്ങളുടെ പ്രശ്നം പങ്കിടുക</h6>
+  <form method="post">
+    <input type="hidden" name="action" value="new_post">
+    <div class="row g-2">
+      <div class="col-md-8">
+        <input type="text" name="title" class="form-control form-control-sm" placeholder="Title / തലക്കെട്ട് (e.g., Banana leaves turning yellow)" required>
+      </div>
+      <div class="col-md-4">
+        <select name="category" class="form-select form-select-sm">
+          <option value="pest-disease">🐛 Pest & Disease Issue</option>
+          <option value="crop-advice">🌾 Crop Advice</option>
+          <option value="market">📈 Market & Selling</option>
+          <option value="irrigation">💧 Irrigation & Water</option>
+          <option value="fertilizer">🧪 Fertilizer & Soil</option>
+          <option value="equipment">🚜 Equipment & Tools</option>
+          <option value="success-story">🏆 Success Story</option>
+          <option value="general">💬 General Discussion</option>
+        </select>
+      </div>
+      <div class="col-12">
+        <textarea name="content" class="form-control form-control-sm" rows="3" placeholder="Describe your problem or share your knowledge in detail... / വിശദമായി വിവരിക്കുക..." required></textarea>
+      </div>
+      <div class="col-md-8">
+        <input type="url" name="image_url" class="form-control form-control-sm" placeholder="Image URL (optional) - paste a link to your photo">
+      </div>
+      <div class="col-md-4">
+        <button type="submit" class="btn btn-success btn-sm w-100">🚀 Post to Community</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<!-- Category Filter -->
+<div class="category-pills">
+  <a href="{{ url_for('community_view', category='all') }}" class="category-pill {{ 'active' if current_category == 'all' else '' }}">All Posts</a>
+  <a href="{{ url_for('community_view', category='pest-disease') }}" class="category-pill {{ 'active' if current_category == 'pest-disease' else '' }}">🐛 Pest & Disease</a>
+  <a href="{{ url_for('community_view', category='crop-advice') }}" class="category-pill {{ 'active' if current_category == 'crop-advice' else '' }}">🌾 Crop Advice</a>
+  <a href="{{ url_for('community_view', category='market') }}" class="category-pill {{ 'active' if current_category == 'market' else '' }}">📈 Market</a>
+  <a href="{{ url_for('community_view', category='irrigation') }}" class="category-pill {{ 'active' if current_category == 'irrigation' else '' }}">💧 Irrigation</a>
+  <a href="{{ url_for('community_view', category='fertilizer') }}" class="category-pill {{ 'active' if current_category == 'fertilizer' else '' }}">🧪 Fertilizer</a>
+  <a href="{{ url_for('community_view', category='success-story') }}" class="category-pill {{ 'active' if current_category == 'success-story' else '' }}">🏆 Success Stories</a>
+</div>
+
+<!-- Posts List -->
+{% if posts %}
+  {% for post in posts %}
+  <div class="post-card">
+    <div class="post-header d-flex justify-content-between align-items-center">
+      <div>
+        <span class="post-author">👨‍🌾 Farmer {{ post.author[-4:] }}</span>
+        <span class="text-muted small ms-2">• {{ post.timestamp }}</span>
+      </div>
+      <span class="post-category">
+        {% if post.category == 'pest-disease' %}🐛 Pest & Disease
+        {% elif post.category == 'crop-advice' %}🌾 Crop Advice
+        {% elif post.category == 'market' %}📈 Market
+        {% elif post.category == 'irrigation' %}💧 Irrigation
+        {% elif post.category == 'fertilizer' %}🧪 Fertilizer
+        {% elif post.category == 'equipment' %}🚜 Equipment
+        {% elif post.category == 'success-story' %}🏆 Success Story
+        {% else %}💬 General
+        {% endif %}
+      </span>
+    </div>
+    <div class="post-body">
+      <h6 class="mb-2">{{ post.title }}</h6>
+      <p class="mb-0 text-muted" style="white-space: pre-wrap;">{{ post.content }}</p>
+      {% if post.image_url %}
+        <img src="{{ post.image_url }}" alt="Post image" class="post-image">
+      {% endif %}
+    </div>
+    <div class="post-actions">
+      <form method="post" class="d-inline">
+        <input type="hidden" name="action" value="like_post">
+        <input type="hidden" name="post_id" value="{{ post.id }}">
+        <button type="submit" class="like-btn {{ 'liked' if session.get('username') in post.liked_by else '' }}">
+          ❤️ {{ post.likes }} Helpful
+        </button>
+      </form>
+      <span class="text-muted small">💬 {{ post.comments|length }} Comments</span>
+    </div>
+    
+    <!-- Comments Section -->
+    <div class="comment-section">
+      {% if post.comments %}
+        {% for comment in post.comments %}
+        <div class="comment-item">
+          <span class="comment-author">👨‍🌾 Farmer {{ comment.author[-4:] }}</span>
+          <span class="text-muted small">• {{ comment.timestamp }}</span>
+          <p class="mb-0 mt-1">{{ comment.text }}</p>
+        </div>
+        {% endfor %}
+      {% endif %}
+      
+      <!-- Add Comment Form -->
+      <form method="post" class="mt-2">
+        <input type="hidden" name="action" value="add_comment">
+        <input type="hidden" name="post_id" value="{{ post.id }}">
+        <div class="input-group input-group-sm">
+          <input type="text" name="comment_text" class="form-control" placeholder="Write a helpful reply... / മറുപടി എഴുതുക..." required>
+          <button type="submit" class="btn btn-outline-success">Reply</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  {% endfor %}
+{% else %}
+  <div class="text-center py-5 text-muted">
+    <h1>🌱</h1>
+    <h5>No posts yet in this category</h5>
+    <p>Be the first to share your farming knowledge or ask a question!</p>
+  </div>
+{% endif %}
+
+{% endblock %}
