@@ -154,17 +154,26 @@
         <span class="post-author">👨‍🌾 Farmer {{ post.author[-4:] }}</span>
         <span class="text-muted small ms-2">• {{ post.timestamp }}</span>
       </div>
-      <span class="post-category">
-        {% if post.category == 'pest-disease' %}🐛 Pest & Disease
-        {% elif post.category == 'crop-advice' %}🌾 Crop Advice
-        {% elif post.category == 'market' %}📈 Market
-        {% elif post.category == 'irrigation' %}💧 Irrigation
-        {% elif post.category == 'fertilizer' %}🧪 Fertilizer
-        {% elif post.category == 'equipment' %}🚜 Equipment
-        {% elif post.category == 'success-story' %}🏆 Success Story
-        {% else %}💬 General
+      <div class="d-flex align-items-center gap-2">
+        <span class="post-category">
+          {% if post.category == 'pest-disease' %}🐛 Pest & Disease
+          {% elif post.category == 'crop-advice' %}🌾 Crop Advice
+          {% elif post.category == 'market' %}📈 Market
+          {% elif post.category == 'irrigation' %}💧 Irrigation
+          {% elif post.category == 'fertilizer' %}🧪 Fertilizer
+          {% elif post.category == 'equipment' %}🚜 Equipment
+          {% elif post.category == 'success-story' %}🏆 Success Story
+          {% else %}💬 General
+          {% endif %}
+        </span>
+        {% if post.author == session.get('username') %}
+        <form method="post" class="d-inline">
+          <input type="hidden" name="action" value="delete_post">
+          <input type="hidden" name="post_id" value="{{ post.id }}">
+          <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this post?')" title="Delete post">🗑️</button>
+        </form>
         {% endif %}
-      </span>
+      </div>
     </div>
     <div class="post-body">
       <h6 class="mb-2">{{ post.title }}</h6>
@@ -188,10 +197,20 @@
     <div class="comment-section">
       {% if post.comments %}
         {% for comment in post.comments %}
-        <div class="comment-item">
-          <span class="comment-author">👨‍🌾 Farmer {{ comment.author[-4:] }}</span>
-          <span class="text-muted small">• {{ comment.timestamp }}</span>
-          <p class="mb-0 mt-1">{{ comment.text }}</p>
+        <div class="comment-item d-flex justify-content-between align-items-start">
+          <div>
+            <span class="comment-author">👨‍🌾 Farmer {{ comment.author[-4:] }}</span>
+            <span class="text-muted small">• {{ comment.timestamp }}</span>
+            <p class="mb-0 mt-1">{{ comment.text }}</p>
+          </div>
+          {% if comment.author == session.get('username') %}
+          <form method="post" class="d-inline ms-2">
+            <input type="hidden" name="action" value="delete_comment">
+            <input type="hidden" name="post_id" value="{{ post.id }}">
+            <input type="hidden" name="comment_index" value="{{ loop.index0 }}">
+            <button type="submit" class="btn btn-sm text-danger p-0" onclick="return confirm('Delete this comment?')" title="Delete comment" style="background: none; border: none;">✕</button>
+          </form>
+          {% endif %}
         </div>
         {% endfor %}
       {% endif %}

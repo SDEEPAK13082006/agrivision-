@@ -362,6 +362,29 @@ def community_view():
                         post["liked_by"].append(user)
                     break
         
+        elif action == "delete_post":
+            post_id = int(request.form.get("post_id", 0))
+            user = session.get("username", "Anonymous")
+            
+            for i, post in enumerate(COMMUNITY_POSTS):
+                if post["id"] == post_id and post["author"] == user:
+                    COMMUNITY_POSTS.pop(i)
+                    flash("Your post has been deleted.")
+                    break
+        
+        elif action == "delete_comment":
+            post_id = int(request.form.get("post_id", 0))
+            comment_index = int(request.form.get("comment_index", -1))
+            user = session.get("username", "Anonymous")
+            
+            for post in COMMUNITY_POSTS:
+                if post["id"] == post_id:
+                    if 0 <= comment_index < len(post["comments"]):
+                        if post["comments"][comment_index]["author"] == user:
+                            post["comments"].pop(comment_index)
+                            flash("Your comment has been deleted.")
+                    break
+        
         return redirect(url_for("community_view"))
     
     # Filter by category if provided
