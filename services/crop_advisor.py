@@ -9,6 +9,13 @@ class CropSuggestion:
     expected_profit_rs_per_ha: int
     reasoning: str
 
+# All 14 districts of Kerala
+KERALA_DISTRICTS = [
+    "thiruvananthapuram", "kollam", "pathanamthitta", "alappuzha",
+    "kottayam", "idukki", "ernakulam", "thrissur", "palakkad",
+    "malappuram", "kozhikode", "wayanad", "kannur", "kasaragod"
+]
+
 CROPS_DB = [
     {
         "name": "Paddy",
@@ -55,6 +62,10 @@ def recommend_crops(
     district: str,
     season: str
 ) -> List[CropSuggestion]:
+    # Check if district is in Kerala
+    if district.lower().strip() not in KERALA_DISTRICTS:
+        return []  # Return empty list for non-Kerala districts
+
     matches: List[Dict] = []
 
     for crop in CROPS_DB:

@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <h4 class="section-title">Personalized Crop Advisor / വ്യക്തിഗത വിള നിർദ്ദേശം</h4>
+<p class="text-muted small">This service is available for <strong>Kerala districts only</strong>.</p>
 <form method="post" class="row g-3 mb-3">
   <div class="col-md-3">
     <label class="form-label">Soil Type / മണ്ണിന്റെ തരം</label>
@@ -17,7 +18,23 @@
   </div>
   <div class="col-md-3">
     <label class="form-label">District / ജില്ല</label>
-    <input type="text" name="district" class="form-control" placeholder="Kottayam" required>
+    <select name="district" class="form-select" required>
+      <option value="">-- Select Kerala District --</option>
+      <option value="Thiruvananthapuram">Thiruvananthapuram</option>
+      <option value="Kollam">Kollam</option>
+      <option value="Pathanamthitta">Pathanamthitta</option>
+      <option value="Alappuzha">Alappuzha</option>
+      <option value="Kottayam">Kottayam</option>
+      <option value="Idukki">Idukki</option>
+      <option value="Ernakulam">Ernakulam</option>
+      <option value="Thrissur">Thrissur</option>
+      <option value="Palakkad">Palakkad</option>
+      <option value="Malappuram">Malappuram</option>
+      <option value="Kozhikode">Kozhikode</option>
+      <option value="Wayanad">Wayanad</option>
+      <option value="Kannur">Kannur</option>
+      <option value="Kasaragod">Kasaragod</option>
+    </select>
   </div>
   <div class="col-md-3">
     <label class="form-label">Season / കാലം</label>
@@ -40,5 +57,9 @@
       </li>
     {% endfor %}
   </ul>
+{% elif submitted %}
+  <div class="alert alert-warning">
+    <strong>No results found.</strong> This service is available only for Kerala districts. Please select a valid Kerala district.
+  </div>
 {% endif %}
 {% endblock %}

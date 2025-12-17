@@ -6,8 +6,19 @@ class WeatherAlert:
     level: str
     message: str
 
+# All 14 districts of Kerala
+KERALA_DISTRICTS = [
+    "thiruvananthapuram", "kollam", "pathanamthitta", "alappuzha",
+    "kottayam", "idukki", "ernakulam", "thrissur", "palakkad",
+    "malappuram", "kozhikode", "wayanad", "kannur", "kasaragod"
+]
+
 
 def get_mock_weather_and_risk(district: str, crop: str) -> list[WeatherAlert]:
+    # Check if district is in Kerala
+    if district.lower().strip() not in KERALA_DISTRICTS:
+        return []  # Return empty list for non-Kerala districts
+
     alerts = []
 
     if district.lower() in ["idukki", "wayanad"]:

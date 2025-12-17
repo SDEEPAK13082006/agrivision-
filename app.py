@@ -130,23 +130,27 @@ def index():
 @app.route("/crop-advisor", methods=["GET", "POST"])
 def crop_advisor_view():
     result = None
+    submitted = False
     if request.method == "POST":
+        submitted = True
         soil_type = request.form["soil_type"]
         land_size = float(request.form["land_size"])
         district = request.form["district"]
         season = request.form["season"]
         result = recommend_crops(soil_type, land_size, district, season)
-    return render_template("crop_advisor.html", result=result)
+    return render_template("crop_advisor.html", result=result, submitted=submitted)
 
 
 @app.route("/weather", methods=["GET", "POST"])
 def weather_view():
     alerts = None
+    submitted = False
     if request.method == "POST":
+        submitted = True
         district = request.form["district"]
         crop = request.form["crop"]
         alerts = get_mock_weather_and_risk(district, crop)
-    return render_template("weather.html", alerts=alerts)
+    return render_template("weather.html", alerts=alerts, submitted=submitted)
 
 
 @app.route("/soil", methods=["GET", "POST"])
