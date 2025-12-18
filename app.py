@@ -13,6 +13,13 @@ from services.fintech import (
     get_subsidy_recommendations,
     KERALA_DISTRICT_RISK
 )
+from services.auth import (
+    validate_mobile_number,
+    is_user_registered,
+    initiate_auth,
+    complete_auth,
+    get_user_data
+)
 
 app = Flask(__name__)
 app.secret_key = "change-this-secret-key-for-production"
@@ -120,8 +127,8 @@ def _is_strong_password(pw: str) -> bool:
 @app.before_request
 def require_login():
     """Force login before accessing any page, except login and static files."""
-    # Some endpoints (like static files) should not be blocked
-    exempt_endpoints = {"login_view", "logout_view", "static"}
+    # Endpoints that don't require authentication
+    exempt_endpoints = {"login_view", "logout_view", "send_otp", "verify_otp", "static"}
     # request.endpoint can be None for some special cases
     if request.endpoint in exempt_endpoints or request.endpoint is None:
         return
@@ -276,31 +283,93 @@ def scheme_detail_view(code: str):
     return render_template("scheme_detail.html", scheme=scheme)
 
 
-@app.route("/login", methods=["GET", "POST"])
+@app.route("/login", methods=["GET"])
 def login_view():
-    """Very simple demo login page.
+    """Mobile number-based login/signup page with OTP verification."""
+    # If already logged in, redirect to home
+    if "username" in session:
+        return redirect(url_for("index"))
+    return render_template("login_otp.html")
 
-    Phone: 10-digit farmer phone number.
-    Password: must include letters, numbers and special characters.
-    """
-    error = None
-    if request.method == "POST":
-        phone = request.form.get("phone", "").strip()
-        password = request.form.get("password", "").strip()
 
-        if not phone:
-            error = "Please enter your phone number."
-        elif not (phone.isdigit() and len(phone) == 10):
-            error = "Phone number must be exactly 10 digits."
-        elif not _is_strong_password(password):
-            error = "Password must include letters, numbers and special characters."
-        else:
-            # Store phone number in session for greeting
-            session["username"] = phone
-            flash("Logged in successfully.")
-            return redirect(url_for("index"))
+@app.route("/auth/send-otp", methods=["POST"])
+def send_otp():
+    """API endpoint to send OTP to mobile number."""
+    try:
+        mobile = request.form.get("mobile", "").strip()
+        
+        # Validate mobile number
+        is_valid, msg = validate_mobile_number(mobile)
+        if not is_valid:
+            return jsonify({
+                "success": False,
+                "message": msg
+            })
+        
+        # Initiate authentication (send OTP)
+        result = initiate_auth(mobile)
+        
+        response_data = {
+            "success": result.success,
+            "message": result.message,
+            "is_registered": result.is_registered,
+            "requires_otp": result.requires_otp
+        }
+        
+        # Include OTP for demo purposes (remove in production!)
+        if result.user_data and "otp_for_demo" in result.user_data:
+            response_data["otp_for_demo"] = result.user_data["otp_for_demo"]
+        
+        return jsonify(response_data)
+    
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "message": f"An error occurred: {str(e)}"
+        }), 500
 
-    return render_template("login.html", error=error)
+
+@app.route("/auth/verify-otp", methods=["POST"])
+def verify_otp():
+    """API endpoint to verify OTP and complete login/signup."""
+    try:
+        mobile = request.form.get("mobile", "").strip()
+        otp = request.form.get("otp", "").strip()
+        name = request.form.get("name", "").strip()
+        
+        # Validate inputs
+        if not mobile or not otp:
+            return jsonify({
+                "success": False,
+                "message": "Mobile number and OTP are required."
+            })
+        
+        if len(otp) != 6 or not otp.isdigit():
+            return jsonify({
+                "success": False,
+                "message": "Please enter a valid 6-digit OTP."
+            })
+        
+        # Complete authentication
+        result = complete_auth(mobile, otp, name)
+        
+        if result.success:
+            # Set session
+            session["username"] = mobile
+            session["user_name"] = result.user_data.get("name", f"Farmer_{mobile[-4:]}") if result.user_data else f"Farmer_{mobile[-4:]}"
+            session["is_verified"] = True
+        
+        return jsonify({
+            "success": result.success,
+            "message": result.message,
+            "is_registered": result.is_registered
+        })
+    
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "message": f"An error occurred: {str(e)}"
+        }), 500
 
 
 @app.route("/logout")

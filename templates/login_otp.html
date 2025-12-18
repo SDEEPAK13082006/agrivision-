@@ -1,0 +1,708 @@
+{% extends "base.html" %}
+{% block title %}Login / Sign Up | AgriVision{% endblock %}
+
+{% block content %}
+<!-- Override base template - Full page login without sidebar -->
+{% endblock %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login / Sign Up | AgriVision - Kerala Smart Farmer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1a5d1a 0%, #0d3d0d 50%, #052505 100%);
+            background-attachment: fixed;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            position: relative;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://img.freepik.com/premium-photo/farmer-rice-field-with-sunrise_1359-331.jpg') center/cover;
+            opacity: 0.15;
+            z-index: 0;
+        }
+        .login-container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 440px;
+            padding: 20px;
+        }
+        .login-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        .login-header {
+            background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
+        .login-header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        .login-header p {
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+        .login-body {
+            padding: 35px;
+        }
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+        .step {
+            display: flex;
+            align-items: center;
+            color: #6c757d;
+            font-size: 0.85rem;
+        }
+        .step.active {
+            color: #28a745;
+            font-weight: 600;
+        }
+        .step.completed {
+            color: #28a745;
+        }
+        .step-number {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 8px;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+        .step.active .step-number {
+            background: #28a745;
+            color: white;
+        }
+        .step.completed .step-number {
+            background: #28a745;
+            color: white;
+        }
+        .step-divider {
+            width: 40px;
+            height: 2px;
+            background: #e9ecef;
+            margin: 0 10px;
+        }
+        .step-divider.completed {
+            background: #28a745;
+        }
+        .form-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .input-group-custom {
+            position: relative;
+        }
+        .input-group-custom .form-control {
+            padding: 14px 14px 14px 50px;
+            border-radius: 12px;
+            border: 2px solid #e9ecef;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        .input-group-custom .form-control:focus {
+            border-color: #28a745;
+            box-shadow: 0 0 0 4px rgba(40, 167, 69, 0.1);
+        }
+        .input-group-custom .input-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+            z-index: 5;
+        }
+        .country-code {
+            position: absolute;
+            left: 45px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #333;
+            font-weight: 600;
+            z-index: 5;
+        }
+        .mobile-input {
+            padding-left: 85px !important;
+        }
+        .btn-primary-custom {
+            background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+            border: none;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(40, 167, 69, 0.3);
+            background: linear-gradient(135deg, #2dbe4e 0%, #28a745 100%);
+        }
+        .btn-primary-custom:disabled {
+            opacity: 0.7;
+            transform: none;
+        }
+        .otp-container {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .otp-input {
+            width: 50px;
+            height: 55px;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        .otp-input:focus {
+            border-color: #28a745;
+            box-shadow: 0 0 0 4px rgba(40, 167, 69, 0.1);
+            outline: none;
+        }
+        .otp-demo-box {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            border: 2px dashed #ffc107;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .otp-demo-box .otp-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #856404;
+            letter-spacing: 8px;
+        }
+        .resend-timer {
+            text-align: center;
+            margin-top: 15px;
+            color: #6c757d;
+        }
+        .resend-btn {
+            color: #28a745;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        .resend-btn:hover {
+            color: #1e7e34;
+        }
+        .resend-btn.disabled {
+            color: #6c757d;
+            cursor: not-allowed;
+            text-decoration: none;
+        }
+        .alert-custom {
+            border-radius: 12px;
+            border: none;
+            padding: 12px 16px;
+        }
+        .back-btn {
+            color: #6c757d;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+        .back-btn:hover {
+            color: #28a745;
+        }
+        .user-type-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+        .badge-new {
+            background: #d4edda;
+            color: #155724;
+        }
+        .badge-existing {
+            background: #cce5ff;
+            color: #004085;
+        }
+        .features-list {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: #495057;
+        }
+        .feature-item i {
+            color: #28a745;
+        }
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #fff;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .name-input-section {
+            display: none;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <h1><i class="fas fa-seedling me-2"></i>AgriVision</h1>
+                <p>Kerala Smart Farmer Assistant</p>
+            </div>
+            
+            <div class="login-body">
+                <!-- Step Indicator -->
+                <div class="step-indicator">
+                    <div class="step active" id="step1-indicator">
+                        <span class="step-number">1</span>
+                        <span>Mobile</span>
+                    </div>
+                    <div class="step-divider" id="divider1"></div>
+                    <div class="step" id="step2-indicator">
+                        <span class="step-number">2</span>
+                        <span>Verify OTP</span>
+                    </div>
+                </div>
+
+                <!-- Alert Messages -->
+                <div id="alert-container"></div>
+
+                <!-- Step 1: Mobile Number Entry -->
+                <div id="step1-form">
+                    <form id="mobile-form">
+                        <div class="mb-4">
+                            <label class="form-label">Enter Mobile Number</label>
+                            <div class="input-group-custom">
+                                <i class="fas fa-phone input-icon"></i>
+                                <span class="country-code">+91</span>
+                                <input type="tel" 
+                                       class="form-control mobile-input" 
+                                       id="mobile-number" 
+                                       name="mobile"
+                                       placeholder="9876543210" 
+                                       maxlength="10"
+                                       pattern="[6-9][0-9]{9}"
+                                       autocomplete="tel"
+                                       required>
+                            </div>
+                            <small class="text-muted mt-2 d-block">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Enter your 10-digit mobile number starting with 6, 7, 8, or 9
+                            </small>
+                        </div>
+                        <button type="submit" class="btn btn-primary-custom" id="send-otp-btn">
+                            <span class="loading-spinner" id="spinner1"></span>
+                            <i class="fas fa-paper-plane me-2"></i>Send OTP
+                        </button>
+                    </form>
+
+                    <div class="features-list">
+                        <div class="feature-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Secure OTP verification</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>No password needed</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Quick and easy access</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: OTP Verification -->
+                <div id="step2-form" style="display: none;">
+                    <div class="back-btn" onclick="goBackToStep1()">
+                        <i class="fas fa-arrow-left"></i> Change Number
+                    </div>
+
+                    <div class="text-center mb-3">
+                        <p class="mb-1">OTP sent to</p>
+                        <h5 class="fw-bold" id="display-mobile">+91 ******1234</h5>
+                        <span class="user-type-badge" id="user-type-badge"></span>
+                    </div>
+
+                    <!-- Demo OTP Display (Remove in production) -->
+                    <div class="otp-demo-box" id="demo-otp-box">
+                        <small class="text-muted d-block mb-1">
+                            <i class="fas fa-flask me-1"></i>Demo Mode - Your OTP is:
+                        </small>
+                        <div class="otp-value" id="demo-otp-value">------</div>
+                    </div>
+
+                    <form id="otp-form">
+                        <div class="mb-3">
+                            <label class="form-label text-center d-block">Enter 6-digit OTP</label>
+                            <div class="otp-container">
+                                <input type="text" class="otp-input" maxlength="1" data-index="0" inputmode="numeric">
+                                <input type="text" class="otp-input" maxlength="1" data-index="1" inputmode="numeric">
+                                <input type="text" class="otp-input" maxlength="1" data-index="2" inputmode="numeric">
+                                <input type="text" class="otp-input" maxlength="1" data-index="3" inputmode="numeric">
+                                <input type="text" class="otp-input" maxlength="1" data-index="4" inputmode="numeric">
+                                <input type="text" class="otp-input" maxlength="1" data-index="5" inputmode="numeric">
+                            </div>
+                            <input type="hidden" id="otp-combined" name="otp">
+                        </div>
+
+                        <!-- Name input for new users -->
+                        <div class="name-input-section" id="name-input-section">
+                            <label class="form-label">Your Name (Optional)</label>
+                            <div class="input-group-custom">
+                                <i class="fas fa-user input-icon"></i>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="user-name" 
+                                       name="name"
+                                       placeholder="Enter your name"
+                                       style="padding-left: 50px;">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary-custom mt-3" id="verify-otp-btn">
+                            <span class="loading-spinner" id="spinner2"></span>
+                            <i class="fas fa-check-circle me-2"></i>Verify & Continue
+                        </button>
+                    </form>
+
+                    <div class="resend-timer">
+                        <span id="resend-text">Didn't receive OTP? </span>
+                        <span class="resend-btn disabled" id="resend-btn" onclick="resendOTP()">
+                            Resend in <span id="countdown">60</span>s
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentMobile = '';
+        let isNewUser = true;
+        let countdownInterval = null;
+
+        // Mobile form submission
+        document.getElementById('mobile-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const mobile = document.getElementById('mobile-number').value.trim();
+            
+            // Validate mobile number
+            if (!/^[6-9][0-9]{9}$/.test(mobile)) {
+                showAlert('Please enter a valid 10-digit mobile number starting with 6, 7, 8, or 9.', 'danger');
+                return;
+            }
+
+            const btn = document.getElementById('send-otp-btn');
+            const spinner = document.getElementById('spinner1');
+            
+            btn.disabled = true;
+            spinner.style.display = 'inline-block';
+
+            try {
+                const formData = new FormData();
+                formData.append('mobile', mobile);
+                formData.append('action', 'send_otp');
+
+                const response = await fetch('/auth/send-otp', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    currentMobile = mobile;
+                    isNewUser = !data.is_registered;
+                    
+                    // Update UI
+                    document.getElementById('display-mobile').textContent = '+91 ******' + mobile.slice(-4);
+                    
+                    // Show user type badge
+                    const badge = document.getElementById('user-type-badge');
+                    if (isNewUser) {
+                        badge.textContent = '🆕 New User - Sign Up';
+                        badge.className = 'user-type-badge badge-new';
+                        document.getElementById('name-input-section').style.display = 'block';
+                    } else {
+                        badge.textContent = '👋 Welcome Back - Login';
+                        badge.className = 'user-type-badge badge-existing';
+                        document.getElementById('name-input-section').style.display = 'none';
+                    }
+
+                    // Show demo OTP (remove in production)
+                    if (data.otp_for_demo) {
+                        document.getElementById('demo-otp-value').textContent = data.otp_for_demo;
+                    }
+
+                    // Switch to step 2
+                    goToStep2();
+                    showAlert(data.message, 'success');
+                    startResendCountdown();
+                } else {
+                    showAlert(data.message, 'danger');
+                }
+            } catch (error) {
+                showAlert('Network error. Please try again.', 'danger');
+            } finally {
+                btn.disabled = false;
+                spinner.style.display = 'none';
+            }
+        });
+
+        // OTP form submission
+        document.getElementById('otp-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const otpInputs = document.querySelectorAll('.otp-input');
+            let otp = '';
+            otpInputs.forEach(input => otp += input.value);
+
+            if (otp.length !== 6) {
+                showAlert('Please enter the complete 6-digit OTP.', 'danger');
+                return;
+            }
+
+            const name = document.getElementById('user-name').value.trim();
+            const btn = document.getElementById('verify-otp-btn');
+            const spinner = document.getElementById('spinner2');
+
+            btn.disabled = true;
+            spinner.style.display = 'inline-block';
+
+            try {
+                const formData = new FormData();
+                formData.append('mobile', currentMobile);
+                formData.append('otp', otp);
+                formData.append('name', name);
+                formData.append('action', 'verify_otp');
+
+                const response = await fetch('/auth/verify-otp', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showAlert(data.message, 'success');
+                    // Redirect to home page after successful login/signup
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 1000);
+                } else {
+                    showAlert(data.message, 'danger');
+                    // Clear OTP inputs on error
+                    otpInputs.forEach(input => input.value = '');
+                    otpInputs[0].focus();
+                }
+            } catch (error) {
+                showAlert('Network error. Please try again.', 'danger');
+            } finally {
+                btn.disabled = false;
+                spinner.style.display = 'none';
+            }
+        });
+
+        // OTP input handling
+        const otpInputs = document.querySelectorAll('.otp-input');
+        otpInputs.forEach((input, index) => {
+            input.addEventListener('input', function(e) {
+                // Only allow digits
+                this.value = this.value.replace(/[^0-9]/g, '');
+                
+                // Auto-focus next input
+                if (this.value && index < otpInputs.length - 1) {
+                    otpInputs[index + 1].focus();
+                }
+            });
+
+            input.addEventListener('keydown', function(e) {
+                // Handle backspace
+                if (e.key === 'Backspace' && !this.value && index > 0) {
+                    otpInputs[index - 1].focus();
+                }
+            });
+
+            // Handle paste
+            input.addEventListener('paste', function(e) {
+                e.preventDefault();
+                const pastedData = e.clipboardData.getData('text').replace(/[^0-9]/g, '');
+                for (let i = 0; i < Math.min(pastedData.length, 6); i++) {
+                    otpInputs[i].value = pastedData[i];
+                }
+                const focusIndex = Math.min(pastedData.length, 5);
+                otpInputs[focusIndex].focus();
+            });
+        });
+
+        // Mobile number input - only allow digits
+        document.getElementById('mobile-number').addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+
+        function goToStep2() {
+            document.getElementById('step1-form').style.display = 'none';
+            document.getElementById('step2-form').style.display = 'block';
+            document.getElementById('step1-indicator').classList.remove('active');
+            document.getElementById('step1-indicator').classList.add('completed');
+            document.getElementById('divider1').classList.add('completed');
+            document.getElementById('step2-indicator').classList.add('active');
+            document.querySelector('.otp-input').focus();
+        }
+
+        function goBackToStep1() {
+            document.getElementById('step1-form').style.display = 'block';
+            document.getElementById('step2-form').style.display = 'none';
+            document.getElementById('step1-indicator').classList.add('active');
+            document.getElementById('step1-indicator').classList.remove('completed');
+            document.getElementById('divider1').classList.remove('completed');
+            document.getElementById('step2-indicator').classList.remove('active');
+            clearCountdown();
+            
+            // Clear OTP inputs
+            document.querySelectorAll('.otp-input').forEach(input => input.value = '');
+        }
+
+        function startResendCountdown() {
+            let seconds = 60;
+            const resendBtn = document.getElementById('resend-btn');
+            const countdown = document.getElementById('countdown');
+            
+            resendBtn.classList.add('disabled');
+            resendBtn.innerHTML = 'Resend in <span id="countdown">60</span>s';
+            countdown.textContent = seconds;
+
+            countdownInterval = setInterval(() => {
+                seconds--;
+                document.getElementById('countdown').textContent = seconds;
+                
+                if (seconds <= 0) {
+                    clearInterval(countdownInterval);
+                    resendBtn.classList.remove('disabled');
+                    resendBtn.innerHTML = 'Resend OTP';
+                }
+            }, 1000);
+        }
+
+        function clearCountdown() {
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+                countdownInterval = null;
+            }
+        }
+
+        async function resendOTP() {
+            const resendBtn = document.getElementById('resend-btn');
+            if (resendBtn.classList.contains('disabled')) return;
+
+            try {
+                const formData = new FormData();
+                formData.append('mobile', currentMobile);
+                formData.append('action', 'send_otp');
+
+                const response = await fetch('/auth/send-otp', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Update demo OTP
+                    if (data.otp_for_demo) {
+                        document.getElementById('demo-otp-value').textContent = data.otp_for_demo;
+                    }
+                    showAlert('New OTP sent successfully!', 'success');
+                    startResendCountdown();
+                } else {
+                    showAlert(data.message, 'danger');
+                }
+            } catch (error) {
+                showAlert('Failed to resend OTP. Please try again.', 'danger');
+            }
+        }
+
+        function showAlert(message, type) {
+            const container = document.getElementById('alert-container');
+            const alertHtml = `
+                <div class="alert alert-${type} alert-custom alert-dismissible fade show" role="alert">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            container.innerHTML = alertHtml;
+
+            // Auto dismiss after 5 seconds
+            setTimeout(() => {
+                const alert = container.querySelector('.alert');
+                if (alert) {
+                    alert.classList.remove('show');
+                    setTimeout(() => container.innerHTML = '', 300);
+                }
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
