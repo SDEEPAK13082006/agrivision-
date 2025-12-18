@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash, abort
+from flask import Flask, render_template, request, redirect, url_for, session, flash, abort, jsonify
 from services.crop_advisor import recommend_crops
 from services.weather_risk import get_mock_weather_and_risk
 from services.soil_fertilizer import calculate_fertilizer
@@ -7,6 +7,12 @@ from services.irrigation import plan_irrigation
 from services.schemes import get_schemes_for_farmer
 from services.pest_diagnosis import diagnose_pest_mock
 from services.growth_prediction import predict_growth
+from services.fintech import (
+    check_loan_eligibility, 
+    analyze_crop_insurance_risk, 
+    get_subsidy_recommendations,
+    KERALA_DISTRICT_RISK
+)
 
 app = Flask(__name__)
 app.secret_key = "change-this-secret-key-for-production"
@@ -395,6 +401,165 @@ def community_view():
         filtered_posts = [p for p in COMMUNITY_POSTS if p["category"] == category_filter]
     
     return render_template("community.html", posts=filtered_posts, current_category=category_filter)
+
+
+# ============================================================================
+# AGRI-FINTECH ROUTES
+# ============================================================================
+
+# Kerala districts for FinTech module
+KERALA_DISTRICTS = [
+    "Thiruvananthapuram", "Kollam", "Pathanamthitta", "Alappuzha",
+    "Kottayam", "Idukki", "Ernakulam", "Thrissur", "Palakkad",
+    "Malappuram", "Kozhikode", "Wayanad", "Kannur", "Kasaragod"
+]
+
+
+@app.route("/fintech")
+def fintech_view():
+    """Agri-FinTech Hub - Loans, Insurance, and Subsidies for Kerala Farmers."""
+    return render_template("fintech.html", districts=KERALA_DISTRICTS)
+
+
+@app.route("/fintech/check-loan", methods=["POST"])
+def check_loan():
+    """API endpoint to check loan eligibility."""
+    try:
+        district = request.form.get("district", "")
+        crop = request.form.get("crop", "")
+        land_size = float(request.form.get("land_size", 0))
+        annual_income = int(request.form.get("annual_income", 0))
+        loan_amount = int(request.form.get("loan_amount", 0))
+        existing_loans = int(request.form.get("existing_loans", 0))
+        has_collateral = request.form.get("has_collateral", "no") == "yes"
+        
+        # Validate district
+        if district not in KERALA_DISTRICTS:
+            return jsonify({"error": "Please select a valid Kerala district."}), 400
+        
+        loans = check_loan_eligibility(
+            land_size_acres=land_size,
+            crop=crop,
+            district=district,
+            annual_income=annual_income,
+            existing_loans=existing_loans,
+            has_collateral=has_collateral,
+            loan_amount_needed=loan_amount
+        )
+        
+        # Convert dataclass objects to dicts
+        loan_data = []
+        for loan in loans:
+            loan_data.append({
+                "loan_name": loan.loan_name,
+                "provider": loan.provider,
+                "eligible": loan.eligible,
+                "max_eligible_amount": loan.max_eligible_amount,
+                "interest_rate": loan.interest_rate,
+                "tenure_months": loan.tenure_months,
+                "monthly_emi": loan.monthly_emi,
+                "total_repayment": loan.total_repayment,
+                "documents_required": loan.documents_required,
+                "apply_at": loan.apply_at,
+                "reason": loan.reason
+            })
+        
+        return jsonify({"loans": loan_data})
+    
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/fintech/analyze-insurance", methods=["POST"])
+def analyze_insurance():
+    """API endpoint to analyze crop insurance risk."""
+    try:
+        district = request.form.get("district", "")
+        crop = request.form.get("crop", "")
+        land_size = float(request.form.get("land_size", 0))
+        season = request.form.get("season", "Kharif")
+        
+        # Validate district
+        if district not in KERALA_DISTRICTS:
+            return jsonify({"error": "Please select a valid Kerala district."}), 400
+        
+        recommendations = analyze_crop_insurance_risk(
+            crop=crop,
+            district=district,
+            land_size_acres=land_size,
+            season=season
+        )
+        
+        # Get risk factors for the district
+        district_risk = KERALA_DISTRICT_RISK.get(district, {})
+        risk_factors = f"District Risk Profile - Flood: {district_risk.get('flood', 'N/A').upper()}, Drought: {district_risk.get('drought', 'N/A').upper()}, Pest: {district_risk.get('pest', 'N/A').upper()}"
+        
+        # Convert dataclass objects to dicts
+        rec_data = []
+        overall_risk = "MEDIUM RISK"
+        for rec in recommendations:
+            rec_data.append({
+                "scheme_name": rec.scheme_name,
+                "provider": rec.provider,
+                "premium_amount": rec.premium_amount,
+                "sum_insured": rec.sum_insured,
+                "coverage": rec.coverage,
+                "risk_score": rec.risk_score,
+                "recommendation": rec.recommendation,
+                "documents": rec.documents
+            })
+            overall_risk = rec.risk_score  # Take from first recommendation
+        
+        return jsonify({
+            "recommendations": rec_data,
+            "overall_risk": overall_risk,
+            "risk_factors": risk_factors
+        })
+    
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/fintech/get-subsidies", methods=["POST"])
+def get_subsidies():
+    """API endpoint to get subsidy recommendations."""
+    try:
+        district = request.form.get("district", "")
+        crop = request.form.get("crop", "")
+        land_size = float(request.form.get("land_size", 0))
+        category = request.form.get("category", "general")
+        has_irrigation = request.form.get("has_irrigation", "yes") == "yes"
+        organic_interest = request.form.get("organic_interest") == "on"
+        
+        # Validate district
+        if district not in KERALA_DISTRICTS:
+            return jsonify({"error": "Please select a valid Kerala district."}), 400
+        
+        subsidies = get_subsidy_recommendations(
+            land_size_acres=land_size,
+            crop=crop,
+            district=district,
+            farmer_category=category,
+            has_irrigation=has_irrigation,
+            organic_interest=organic_interest
+        )
+        
+        # Convert dataclass objects to dicts
+        subsidy_data = []
+        for sub in subsidies:
+            subsidy_data.append({
+                "scheme_name": sub.scheme_name,
+                "potential_benefit": sub.potential_benefit,
+                "eligibility_status": sub.eligibility_status,
+                "description": sub.description,
+                "how_to_apply": sub.how_to_apply,
+                "documents": sub.documents
+            })
+        
+        return jsonify({"subsidies": subsidy_data})
+    
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 if __name__ == "__main__":
