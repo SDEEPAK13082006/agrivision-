@@ -427,12 +427,30 @@ def check_loan():
     try:
         district = request.form.get("district", "")
         crop = request.form.get("crop", "")
-        land_size = float(request.form.get("land_size", 0))
-        annual_income = int(request.form.get("annual_income", 0))
-        loan_amount = int(request.form.get("loan_amount", 0))
-        existing_loans = int(request.form.get("existing_loans", 0))
+        
+        # Validate and convert numeric inputs
+        try:
+            land_size = float(request.form.get("land_size", 0) or 0)
+            annual_income = int(request.form.get("annual_income", 0) or 0)
+            loan_amount = int(request.form.get("loan_amount", 0) or 0)
+            existing_loans = int(request.form.get("existing_loans", 0) or 0)
+        except (ValueError, TypeError):
+            return jsonify({"error": "Please enter valid numeric values."}), 400
+        
         has_collateral = request.form.get("has_collateral", "no") == "yes"
         
+        # Validate inputs
+        if not district:
+            return jsonify({"error": "Please select a district."}), 400
+        if not crop:
+            return jsonify({"error": "Please select a crop."}), 400
+        if land_size <= 0:
+            return jsonify({"error": "Please enter a valid land size."}), 400
+        if annual_income <= 0:
+            return jsonify({"error": "Please enter a valid annual income."}), 400
+        if loan_amount <= 0:
+            return jsonify({"error": "Please enter a valid loan amount."}), 400
+            
         # Validate district
         if district not in KERALA_DISTRICTS:
             return jsonify({"error": "Please select a valid Kerala district."}), 400
@@ -476,8 +494,24 @@ def analyze_insurance():
     try:
         district = request.form.get("district", "")
         crop = request.form.get("crop", "")
-        land_size = float(request.form.get("land_size", 0))
+        land_size_str = request.form.get("land_size", "0")
         season = request.form.get("season", "Kharif")
+        
+        # Validate inputs
+        if not district:
+            return jsonify({"error": "Please select a district."}), 400
+        if not crop:
+            return jsonify({"error": "Please select a crop."}), 400
+        if not season:
+            return jsonify({"error": "Please select a season."}), 400
+        
+        try:
+            land_size = float(land_size_str) if land_size_str else 0
+        except ValueError:
+            return jsonify({"error": "Please enter a valid land size."}), 400
+        
+        if land_size <= 0:
+            return jsonify({"error": "Land size must be greater than 0."}), 400
         
         # Validate district
         if district not in KERALA_DISTRICTS:
@@ -526,10 +560,23 @@ def get_subsidies():
     try:
         district = request.form.get("district", "")
         crop = request.form.get("crop", "")
-        land_size = float(request.form.get("land_size", 0))
         category = request.form.get("category", "general")
         has_irrigation = request.form.get("has_irrigation", "yes") == "yes"
         organic_interest = request.form.get("organic_interest") == "on"
+        
+        # Validate and convert numeric inputs
+        try:
+            land_size = float(request.form.get("land_size", 0) or 0)
+        except (ValueError, TypeError):
+            return jsonify({"error": "Please enter a valid land size."}), 400
+        
+        # Validate inputs
+        if not district:
+            return jsonify({"error": "Please select a district."}), 400
+        if not crop:
+            return jsonify({"error": "Please select a crop."}), 400
+        if land_size <= 0:
+            return jsonify({"error": "Please enter a valid land size."}), 400
         
         # Validate district
         if district not in KERALA_DISTRICTS:
