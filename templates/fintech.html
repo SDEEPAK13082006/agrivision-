@@ -348,7 +348,11 @@ document.getElementById('loan-form').addEventListener('submit', async function(e
             body: formData
         });
         const data = await response.json();
-        displayLoanResults(data);
+        if (data.error) {
+            resultsDiv.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+        } else {
+            displayLoanResults(data);
+        }
     } catch (error) {
         resultsDiv.innerHTML = '<div class="alert alert-danger">Error checking eligibility. Please try again.</div>';
     }
@@ -367,7 +371,11 @@ document.getElementById('insurance-form').addEventListener('submit', async funct
             body: formData
         });
         const data = await response.json();
-        displayInsuranceResults(data);
+        if (data.error) {
+            resultsDiv.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+        } else {
+            displayInsuranceResults(data);
+        }
     } catch (error) {
         resultsDiv.innerHTML = '<div class="alert alert-danger">Error analyzing insurance. Please try again.</div>';
     }
@@ -386,7 +394,11 @@ document.getElementById('subsidy-form').addEventListener('submit', async functio
             body: formData
         });
         const data = await response.json();
-        displaySubsidyResults(data);
+        if (data.error) {
+            resultsDiv.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+        } else {
+            displaySubsidyResults(data);
+        }
     } catch (error) {
         resultsDiv.innerHTML = '<div class="alert alert-danger">Error finding subsidies. Please try again.</div>';
     }
@@ -455,6 +467,13 @@ function displayLoanResults(data) {
 
 function displayInsuranceResults(data) {
     const resultsDiv = document.getElementById('insurance-results');
+    
+    // Check if data has required fields
+    if (!data.overall_risk || !data.recommendations) {
+        resultsDiv.innerHTML = '<div class="alert alert-danger">Invalid response from server. Please try again.</div>';
+        return;
+    }
+    
     let html = '';
     
     // Risk Assessment Header
